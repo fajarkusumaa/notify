@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # notify
 Ordinary Notes App
 =======
