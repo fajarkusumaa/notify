@@ -22,6 +22,22 @@
     filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.ce-header {
+    position: relative;
+}
+
+h2.ce-header::after {
+    content: 'H2';
+    @apply absolute -left-24 bottom-2 font-normal opacity-30 text-xl
+}
+
+h3.ce-header::after {
+    content: 'H3';
+    @apply absolute -left-24 bottom-2 font-normal opacity-30 text-base
+}
+
+
+
 
 
 .prose :where(h2):not(:where([class~="not-prose"] *)) {

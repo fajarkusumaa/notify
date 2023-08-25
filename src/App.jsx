@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import FlexboxWithDraggableCards from "./components/FlexboxWithDraggableCards";
 import Sidebar from "./components/Sidebar";
@@ -6,6 +6,8 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import SimpleImage from "@editorjs/simple-image";
+
+import NoteData from "./components/NoteData";
 
 import "./App.css";
 
@@ -29,157 +31,73 @@ function App() {
             title: "Card title",
             desc: "Write your description here..."
         };
+
+        // add New Card
         setCards([...cards, newCard]);
+
+        // add newNote
+        const newNote = [
+            {
+                type: "header",
+                data: {
+                    text: "Write your journey title here",
+                    level: 2
+                }
+            },
+
+            {
+                type: "paragraph",
+                data: {
+                    text: "Embark on an unforgettable journey where you'll discover [Destination], a [Adjective] land of [Noun] and [Noun]. From the moment you set foot in this [Adjective] paradise, you'll be captivated by the [Adjective] [Landmarks/Scenery] and immersed in the rich tapestry of [Culture/History]."
+                }
+            },
+
+            {
+                type: "list",
+                data: {
+                    items: [
+                        "Chasing fox in forest",
+                        "Hunting some ducks and make a grill to cook 'em"
+                    ],
+                    style: "unordered"
+                }
+            }
+        ];
+        NoteData.push(newNote); // Update NoteData array
     };
 
-    const [selectedTab, setSelectedTab] = useState(0);
+    const [selectedTab, setSelectedTab] = useState(1);
 
-    const editorConfigs = [
-        {
-            holderId: "editorjs0",
-            tools: {
-                header: {
-                    class: Header,
-                    inlineToolbar: ["link"],
-                    config: {
-                        placeholder: "Enter a header",
-                        levels: [1, 2, 3, 4],
-                        defaultLevel: 3
-                    }
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true
-                },
-                image: {
-                    class: SimpleImage
-                    // inlineToolbar: ["link"]
-                }
-            },
-            time: 1550476186479,
-            data: {
-                blocks: [
-                    {
-                        type: "header",
-                        data: {
-                            text: "2-day itinerary for experiencing Japanese culture in Tokyo",
-                            level: 2
-                        }
-                    },
-                    {
-                        type: "image",
-                        data: {
-                            url: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-                            caption: "Mt. Fuji, Japan",
-                            stretched: false,
-                            withBorder: false
-                        }
-                    },
+    const editorRef = useRef(null);
 
-                    {
-                        type: "paragraph",
-                        data: {
-                            text: "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration."
-                        }
-                    },
-
-                    {
-                        type: "list",
-                        data: {
-                            items: [
-                                "It is a block-style editor",
-                                "It returns clean data output in JSON",
-                                "Designed to be extendable and pluggable with a simple API"
-                            ],
-                            style: "unordered"
-                        }
-                    },
-
-                    {
-                        type: "paragraph",
-                        data: {
-                            text: "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration."
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            holderId: "editorjs1",
-            tools: {
-                header: {
-                    class: Header,
-                    inlineToolbar: ["link"],
-                    config: {
-                        placeholder: "Enter a header",
-                        levels: [1, 2, 3, 4],
-                        defaultLevel: 3
-                    }
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true
-                },
-                image: {
-                    class: SimpleImage
-                    // inlineToolbar: ["link"]
-                }
-            },
-            time: 1550476186479,
-            data: {
-                blocks: [
-                    {
-                        type: "header",
-                        data: {
-                            text: "2-day itinerary for experiencing Japanese culture in Spanish",
-                            level: 2
-                        }
-                    },
-                    {
-                        type: "image",
-                        data: {
-                            url: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-                            caption: "Mt. Fuji, Japan",
-                            stretched: false,
-                            withBorder: false
-                        }
-                    },
-
-                    {
-                        type: "paragraph",
-                        data: {
-                            text: "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration."
-                        }
-                    },
-
-                    {
-                        type: "list",
-                        data: {
-                            items: [
-                                "It is a block-style editor",
-                                "It returns clean data output in JSON",
-                                "Designed to be extendable and pluggable with a simple API"
-                            ],
-                            style: "unordered"
-                        }
-                    },
-
-                    {
-                        type: "paragraph",
-
-                        data: {
-                            text: "Hey. Meet the new Editor. On this page you can see it in action — try to edit this text. Source code of the page contains the example of connection and configuration."
-                        }
-                    }
-                ]
-            }
-        }
-    ];
-    // Editor JS
     useEffect(() => {
-        editorConfigs.forEach((config) => {
-            const editor = new EditorJS(config);
-            // ... do something with the editor instance if needed
+        if (editorRef.current) {
+            editorRef.current.destroy();
+        }
+
+        editorRef.current = new EditorJS({
+            holderId: "editorjs",
+            tools: {
+                header: {
+                    class: Header,
+                    inlineToolbar: ["link"],
+                    config: {
+                        placeholder: "Enter a header",
+                        levels: [1, 2, 3, 4],
+                        defaultLevel: 3
+                    }
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true
+                },
+                image: {
+                    class: SimpleImage
+                }
+            },
+            data: {
+                blocks: NoteData[selectedTab]
+            }
         });
     }, [selectedTab]);
 
@@ -238,14 +156,7 @@ function App() {
                             className="detail-notes prose w-2/3 h-screen px-12 flex align-top  overflow-x-auto track-slate"
                             style={{ maxWidth: "unset" }}
                         >
-                            {selectedTab === 0 ? (
-                                <div id={`editorjs0`} className="w-full"></div>
-                            ) : (
-                                <div
-                                    id={`editorjs${selectedTab}`}
-                                    className="w-full"
-                                ></div>
-                            )}
+                            <div id="editorjs" className="w-full"></div>
                         </div>
                     </div>
                 </div>
