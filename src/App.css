@@ -26,6 +26,13 @@
     position: relative;
 }
 
+
+
+h1.ce-header::after {
+    content: 'H1';
+    @apply absolute -left-24 bottom-2 font-normal opacity-30 text-2xl
+}
+
 h2.ce-header::after {
     content: 'H2';
     @apply absolute -left-24 bottom-2 font-normal opacity-30 text-xl
@@ -36,17 +43,30 @@ h3.ce-header::after {
     @apply absolute -left-24 bottom-2 font-normal opacity-30 text-base
 }
 
+h4.ce-header::after {
+    content: 'H4';
+    @apply absolute -left-24 bottom-2 font-normal opacity-30 text-sm
+}
 
 
 
 
-.prose :where(h2):not(:where([class~="not-prose"] *)) {
+
+.prose :where(h1, h2, h3, h4):not(:where([class~="not-prose"] *)) {
     color: var(--tw-prose-headings);
     font-weight: 700;
     font-size: 1.5em;
     margin-top: 0 !important;
-    margin-bottom: 1em;
+    margin-bottom: 0 !important;
     line-height: 1.3333333;
+}
+
+.prose :where(img):not(:where([class~="not-prose"] *)) {
+    margin: 0 0 !important;
+}
+
+.prose :where(ul):not(:where([class~="not-prose"] *)) {
+    margin: 0 !important;
 }
 
 @keyframes logo-spin {

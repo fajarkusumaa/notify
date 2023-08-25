@@ -12,19 +12,22 @@ import NoteData from "./components/NoteData";
 import "./App.css";
 
 function App() {
+    const [selectedTab, setSelectedTab] = useState(0);
+
     const [cards, setCards] = useState([
         {
-            id: "1",
-            title: "Card title",
+            id: "0",
+            title: "Japanese culture in Tokyo",
             desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vero excepturi voluptatibus unde hic! Fuga, dignissimos."
         },
         {
-            id: "2",
-            title: "Card title",
+            id: "1",
+            title: "Explore local culinary in Barcelona",
             desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vero excepturi voluptatibus unde hic! Fuga, dignissimos."
         }
     ]);
 
+    // Add Card
     const addNewCard = () => {
         const newCard = {
             id: `${cards.length + 1}`,
@@ -34,39 +37,44 @@ function App() {
 
         // add New Card
         setCards([...cards, newCard]);
-
-        // add newNote
-        const newNote = [
-            {
-                type: "header",
-                data: {
-                    text: "Write your journey title here",
-                    level: 2
-                }
-            },
-
-            {
-                type: "paragraph",
-                data: {
-                    text: "Embark on an unforgettable journey where you'll discover [Destination], a [Adjective] land of [Noun] and [Noun]. From the moment you set foot in this [Adjective] paradise, you'll be captivated by the [Adjective] [Landmarks/Scenery] and immersed in the rich tapestry of [Culture/History]."
-                }
-            },
-
-            {
-                type: "list",
-                data: {
-                    items: [
-                        "Chasing fox in forest",
-                        "Hunting some ducks and make a grill to cook 'em"
-                    ],
-                    style: "unordered"
-                }
-            }
-        ];
-        NoteData.push(newNote); // Update NoteData array
     };
 
-    const [selectedTab, setSelectedTab] = useState(1);
+    // add newNote Template
+    useEffect(() => {
+        const newNote = {
+            id: `${cards.length + 1}`,
+            blocks: [
+                {
+                    type: "header",
+
+                    data: {
+                        text: "Write your journey title here !",
+                        level: 1
+                    }
+                },
+
+                {
+                    type: "paragraph",
+                    data: {
+                        text: "Embark on an unforgettable journey where you'll discover [Destination], a [Adjective] land of [Noun] and [Noun]. From the moment you set foot in this [Adjective] paradise, you'll be captivated by the [Adjective] [Landmarks/Scenery] and immersed in the rich tapestry of [Culture/History]."
+                    }
+                },
+
+                {
+                    type: "list",
+                    data: {
+                        items: [
+                            "Chasing fox in forest",
+                            "Hunting some ducks and make a grill to cook 'em"
+                        ],
+                        style: "unordered"
+                    }
+                }
+            ]
+        };
+
+        NoteData.push(newNote); // Update NoteData array
+    }, [cards]);
 
     const editorRef = useRef(null);
 
@@ -96,7 +104,7 @@ function App() {
                 }
             },
             data: {
-                blocks: NoteData[selectedTab]
+                blocks: NoteData[selectedTab].blocks
             }
         });
     }, [selectedTab]);
@@ -149,6 +157,7 @@ function App() {
                                 cards={cards}
                                 setCards={setCards}
                                 setSelectedTab={setSelectedTab}
+                                selectedTab={selectedTab}
                             />
                         </div>
 

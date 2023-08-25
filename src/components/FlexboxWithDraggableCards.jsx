@@ -7,7 +7,8 @@ const FlexboxWithDraggableCards = ({
     cards,
     setCards,
     handleContentChange,
-    setSelectedTab
+    setSelectedTab,
+    selectedTab
 }) => {
     const [draggedIndex, setDraggedIndex] = useState();
 
@@ -43,8 +44,17 @@ const FlexboxWithDraggableCards = ({
                         {cards.map((card, index) => (
                             <button
                                 key={index}
-                                onClick={() => setSelectedTab(index)}
-                                className="bg-transparent p-0 m-0 text-start border-none ring-0 outline-none"
+                                onClick={() => setSelectedTab(card.id)}
+                                className={`
+                                ${
+                                    selectedTab === card.id
+                                        ? "bg-orange-200"
+                                        : "bg-zinc-50"
+                                }
+
+                                rounded-2xl p-0 m-0 text-start border-none ring-0 outline-none
+                                
+                                `}
                             >
                                 <Card
                                     key={card.id}
