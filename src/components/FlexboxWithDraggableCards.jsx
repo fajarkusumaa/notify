@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import Card from "./Card";
 
@@ -32,6 +32,9 @@ const FlexboxWithDraggableCards = ({
         setCards(updatedCards);
     };
 
+    console.log(selectedTab);
+    console.log(cards);
+
     return (
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             <Droppable droppableId="flexbox" direction="vertical">
@@ -42,28 +45,24 @@ const FlexboxWithDraggableCards = ({
                         className="flex flex-col gap-4"
                     >
                         {cards.map((card, index) => (
-                            <button
+                            <div
                                 key={index}
-                                onClick={() => setSelectedTab(card.id)}
-                                className={`
-                                ${
+                                className={`${
                                     selectedTab === card.id
                                         ? "bg-orange-200"
                                         : "bg-zinc-50"
-                                }
-
-                                rounded-2xl p-0 m-0 text-start border-none ring-0 outline-none
-                                
-                                `}
+                                } rounded-2xl p-0 m-0 text-start border-none ring-0 outline-none`}
                             >
                                 <Card
-                                    key={card.id}
+                                    key={index}
+                                    selectedTab={selectedTab}
+                                    setSelectedTab={setSelectedTab}
                                     card={card}
                                     index={index}
                                     isPlaceholder={draggedIndex === index}
                                     handleContentChange={handleContentChange}
                                 />
-                            </button>
+                            </div>
                         ))}
                         {provided.placeholder}
                     </div>

@@ -12,8 +12,6 @@ import NoteData from "./components/NoteData";
 import "./App.css";
 
 function App() {
-    const [selectedTab, setSelectedTab] = useState(0);
-
     const [cards, setCards] = useState([
         {
             id: "0",
@@ -76,6 +74,7 @@ function App() {
         NoteData.push(newNote); // Update NoteData array
     }, [cards]);
 
+    const [selectedTab, setSelectedTab] = useState(null);
     const editorRef = useRef(null);
 
     useEffect(() => {
@@ -83,30 +82,32 @@ function App() {
             editorRef.current.destroy();
         }
 
-        editorRef.current = new EditorJS({
-            holderId: "editorjs",
-            tools: {
-                header: {
-                    class: Header,
-                    inlineToolbar: ["link"],
-                    config: {
-                        placeholder: "Enter a header",
-                        levels: [1, 2, 3, 4],
-                        defaultLevel: 3
+        if (NoteData[selectedTab]?.blocks?.length > 0) {
+            editorRef.current = new EditorJS({
+                holderId: "editorjs",
+                tools: {
+                    header: {
+                        class: Header,
+                        inlineToolbar: ["link"],
+                        config: {
+                            placeholder: "Enter a header",
+                            levels: [1, 2, 3, 4],
+                            defaultLevel: 3
+                        }
+                    },
+                    list: {
+                        class: List,
+                        inlineToolbar: true
+                    },
+                    image: {
+                        class: SimpleImage
                     }
                 },
-                list: {
-                    class: List,
-                    inlineToolbar: true
-                },
-                image: {
-                    class: SimpleImage
+                data: {
+                    blocks: NoteData[selectedTab].blocks
                 }
-            },
-            data: {
-                blocks: NoteData[selectedTab].blocks
-            }
-        });
+            });
+        }
     }, [selectedTab]);
 
     const [show, setShow] = useState(false);
@@ -115,9 +116,9 @@ function App() {
 
     return (
         <>
-            <div className="bg-white w-screen flex ">
+            <div className="bg-white w-screen h-auto flex ">
+                {" "}
                 <Sidebar addNewCard={addNewCard} />
-
                 <div className="p-8 text-slate-800 w-full">
                     <div className="flex justify-between container">
                         <input
@@ -162,10 +163,53 @@ function App() {
                         </div>
 
                         <div
-                            className="detail-notes prose w-2/3 h-screen px-12 flex align-top  overflow-x-auto track-slate"
+                            className="detail-notes prose w-2/3 h-auto flex align-top  overflow-x-auto track-slate"
                             style={{ maxWidth: "unset" }}
                         >
-                            <div id="editorjs" className="w-full"></div>
+                            {selectedTab === null ? (
+                                <>
+                                    <div className="w-full p-20 border-dashed border-2````````````````````````````````````````` relative rounded-3xl items-center flex justify-center">
+                                        <p className="text-center text-slate-400">
+                                            Looks like you doesnt choose any
+                                            notes ☹️. <br /> Please choose one
+                                            here.
+                                        </p>
+                                        <svg
+                                            id="emPX16Grpl01"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 300 300"
+                                            shapeRendering="geometricPrecision"
+                                            textRendering="geometricPrecision"
+                                            className="absolute w-1/3 left-0"
+                                        >
+                                            <g>
+                                                <path
+                                                    d="M238.363242,127.948788q-84.945787-74.846791-171.170813-9.126496"
+                                                    transform="translate(.000005 0)"
+                                                    fill="none"
+                                                    stroke="#fb923c"
+                                                    strokeWidth="3"
+                                                    strokeLinecap="round"
+                                                    strokeDasharray="10,10"
+                                                />
+                                                <path
+                                                    d="M67.192429,96.740273l-5.257624,26.288118l26.288118,2.10305"
+                                                    transform="translate(-7.886435 4.920397)"
+                                                    fill="none"
+                                                    stroke="#fb923c"
+                                                    strokeWidth="3"
+                                                    strokeLinecap="round"
+                                                />
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {" "}
+                                    <div id="editorjs" className="w-full"></div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

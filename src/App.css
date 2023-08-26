@@ -30,7 +30,7 @@
 
 h1.ce-header::after {
     content: 'H1';
-    @apply absolute -left-24 bottom-2 font-normal opacity-30 text-2xl
+    @apply absolute -left-24 bottom-2 font-normal opacity-30 text-2xl p-0
 }
 
 h2.ce-header::after {
@@ -49,7 +49,9 @@ h4.ce-header::after {
 }
 
 
-
+.cdx-simple-image .cdx-input {
+    display: none !important;
+}
 
 
 .prose :where(h1, h2, h3, h4):not(:where([class~="not-prose"] *)) {
