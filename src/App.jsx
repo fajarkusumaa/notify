@@ -1,118 +1,87 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
-import FlexboxWithDraggableCards from "./components/FlexboxWithDraggableCards";
 import Sidebar from "./components/Sidebar";
-import EditorJS from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import List from "@editorjs/list";
-import SimpleImage from "@editorjs/simple-image";
-
-import NoteData from "./components/NoteData";
 
 import "./App.css";
 
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+
+import Card from "./components/Card";
+import Editor from "./components/EditorJS";
+
 function App() {
-    const [cards, setCards] = useState([
-        {
-            id: "0",
-            title: "Japanese culture in Tokyo",
-            desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vero excepturi voluptatibus unde hic! Fuga, dignissimos."
-        },
-        {
-            id: "1",
-            title: "Explore local culinary in Barcelona",
-            desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vero excepturi voluptatibus unde hic! Fuga, dignissimos."
-        }
-    ]);
+    const [cards, setCards] = useState([]);
+
+    // Get Data
+    const getData = async () => {
+        const querySnapshot = await getDocs(collection(db, "cards"));
+        const tempData = [];
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            tempData.push({ ...doc.data(), id: doc.id });
+        });
+        setCards(tempData);
+
+        console.log(tempData);
+    };
+    // -- Get Data
+
+    useEffect(() => {
+        getData();
+    }, []);
 
     // Add Card
-    const addNewCard = () => {
-        const newCard = {
-            id: `${cards.length + 1}`,
-            title: "Card title",
-            desc: "Write your description here..."
-        };
+    const addNewCard = async () => {
+        try {
+            const docRef = await addDoc(collection(db, "cards"), {
+                title: "Card Title",
+                desc: "Write your description here",
+                content: {
+                    blocks: [
+                        {
+                            type: "header",
 
-        // add New Card
-        setCards([...cards, newCard]);
-    };
+                            data: {
+                                text: "Write your journey title here !",
+                                level: 1
+                            }
+                        },
 
-    // add newNote Template
-    useEffect(() => {
-        const newNote = {
-            id: `${cards.length + 1}`,
-            blocks: [
-                {
-                    type: "header",
+                        {
+                            type: "paragraph",
+                            data: {
+                                text: "Embark on an unforgettable journey where you'll discover [Destination], a [Adjective] land of [Noun] and [Noun]. From the moment you set foot in this [Adjective] paradise, you'll be captivated by the [Adjective] [Landmarks/Scenery] and immersed in the rich tapestry of [Culture/History]."
+                            }
+                        },
 
-                    data: {
-                        text: "Write your journey title here !",
-                        level: 1
-                    }
-                },
-
-                {
-                    type: "paragraph",
-                    data: {
-                        text: "Embark on an unforgettable journey where you'll discover [Destination], a [Adjective] land of [Noun] and [Noun]. From the moment you set foot in this [Adjective] paradise, you'll be captivated by the [Adjective] [Landmarks/Scenery] and immersed in the rich tapestry of [Culture/History]."
-                    }
-                },
-
-                {
-                    type: "list",
-                    data: {
-                        items: [
-                            "Chasing fox in forest",
-                            "Hunting some ducks and make a grill to cook 'em"
-                        ],
-                        style: "unordered"
-                    }
-                }
-            ]
-        };
-
-        NoteData.push(newNote); // Update NoteData array
-    }, [cards]);
-
-    const [selectedTab, setSelectedTab] = useState(null);
-    const editorRef = useRef(null);
-
-    useEffect(() => {
-        if (editorRef.current) {
-            editorRef.current.destroy();
-        }
-
-        if (NoteData[selectedTab]?.blocks?.length > 0) {
-            editorRef.current = new EditorJS({
-                holderId: "editorjs",
-                tools: {
-                    header: {
-                        class: Header,
-                        inlineToolbar: ["link"],
-                        config: {
-                            placeholder: "Enter a header",
-                            levels: [1, 2, 3, 4],
-                            defaultLevel: 3
+                        {
+                            type: "list",
+                            data: {
+                                items: [
+                                    "Chasing fox in forest",
+                                    "Hunting some ducks and make a grill to cook 'em"
+                                ],
+                                style: "unordered"
+                            }
                         }
-                    },
-                    list: {
-                        class: List,
-                        inlineToolbar: true
-                    },
-                    image: {
-                        class: SimpleImage
-                    }
-                },
-                data: {
-                    blocks: NoteData[selectedTab].blocks
+                    ]
                 }
             });
+
+            console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+            console.error("Error adding document: ", e);
         }
-    }, [selectedTab]);
+
+        getData();
+    };
+
+    const [selectedTab, setSelectedTab] = useState(null);
+
+    const [docID, setDocID] = useState();
 
     const [show, setShow] = useState(false);
-
-    console.log(selectedTab);
 
     return (
         <>
@@ -154,62 +123,52 @@ function App() {
                             <div className="text-4xl font-bold mb-12 ps-4">
                                 Notes
                             </div>
-                            <FlexboxWithDraggableCards
-                                cards={cards}
-                                setCards={setCards}
-                                setSelectedTab={setSelectedTab}
-                                selectedTab={selectedTab}
-                            />
+
+                            <div className="flex flex-col gap-4">
+                                {cards?.map((card, i) => {
+                                    console.log(card.content.blocks);
+                                    return (
+                                        <>
+                                            <button
+                                                onClick={() => setDocID(i)}
+                                                className="bg-transparent p-0 m-0 border-0 outline-none ring-0"
+                                                key={i}
+                                            >
+                                                <Card
+                                                    onClick={() =>
+                                                        setDocID(card.id)
+                                                    }
+                                                    selectedTab={selectedTab}
+                                                    setSelectedTab={
+                                                        setSelectedTab
+                                                    }
+                                                    card={card}
+                                                />
+                                            </button>
+                                        </>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         <div
-                            className="detail-notes prose w-2/3 h-auto flex align-top  overflow-x-auto track-slate"
-                            style={{ maxWidth: "unset" }}
+                            className="detail-notes prose w-2/3 h-auto align-top  overflow-x-auto track-slate"
+                            style={{ maxWidth: "100%" }}
                         >
-                            {selectedTab === null ? (
-                                <>
-                                    <div className="w-full p-20 border-dashed border-2````````````````````````````````````````` relative rounded-3xl items-center flex justify-center">
-                                        <p className="text-center text-slate-400">
-                                            Looks like you doesnt choose any
-                                            notes ☹️. <br /> Please choose one
-                                            here.
-                                        </p>
-                                        <svg
-                                            id="emPX16Grpl01"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 300 300"
-                                            shapeRendering="geometricPrecision"
-                                            textRendering="geometricPrecision"
-                                            className="absolute w-1/3 left-0"
-                                        >
-                                            <g>
-                                                <path
-                                                    d="M238.363242,127.948788q-84.945787-74.846791-171.170813-9.126496"
-                                                    transform="translate(.000005 0)"
-                                                    fill="none"
-                                                    stroke="#fb923c"
-                                                    strokeWidth="3"
-                                                    strokeLinecap="round"
-                                                    strokeDasharray="10,10"
-                                                />
-                                                <path
-                                                    d="M67.192429,96.740273l-5.257624,26.288118l26.288118,2.10305"
-                                                    transform="translate(-7.886435 4.920397)"
-                                                    fill="none"
-                                                    stroke="#fb923c"
-                                                    strokeWidth="3"
-                                                    strokeLinecap="round"
-                                                />
-                                            </g>
-                                        </svg>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    {" "}
-                                    <div id="editorjs" className="w-full"></div>
-                                </>
-                            )}
+                            {cards.map((card, i) => {
+                                console.log(card);
+                                return (
+                                    <>
+                                        {docID === i && (
+                                            <Editor
+                                                data={card.content.blocks}
+                                                docID={docID} // Pass the index (docID) of the card
+                                                card={card}
+                                            />
+                                        )}
+                                    </>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

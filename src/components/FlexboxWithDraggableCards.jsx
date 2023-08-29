@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import Card from "./Card";
 
@@ -31,9 +31,6 @@ const FlexboxWithDraggableCards = ({
 
         setCards(updatedCards);
     };
-
-    console.log(selectedTab);
-    console.log(cards);
 
     return (
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
