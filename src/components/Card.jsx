@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 // import { useState } from "react";
 // import { Draggable } from "react-beautiful-dnd";
@@ -7,7 +8,7 @@ import moment from "moment/moment";
 import { useState, useEffect } from "react";
 import { db } from "../../firebase";
 
-const Card = ({ card, setSelectedTab }) => {
+const Card = ({ card, setSelectedTab, onDelete }) => {
     const onSave = async () => {
         const noteRef = doc(db, "cards", card.id);
         // Set the "capital" field of the city 'DC'
@@ -25,6 +26,8 @@ const Card = ({ card, setSelectedTab }) => {
         const updateTime = moment(card.content.time).fromNow();
         setTimeAgo(updateTime);
     };
+
+    console.log(timeAgo);
 
     useEffect(() => {
         updatingTime();
@@ -74,6 +77,8 @@ const Card = ({ card, setSelectedTab }) => {
                     }
                     className="bg-transparent my-2 ps-1 text-lg w-full focus:bg-zinc-100 opacity-50 focus-visible:outline-none placeholder:opacity-100 placeholder:text-zinc-900"
                 />
+
+                <button onClick={() => onDelete()}>Del</button>
             </div>
 
             {/* Time Update */}

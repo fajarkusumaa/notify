@@ -4,7 +4,13 @@ import Sidebar from "./components/Sidebar";
 
 import "./App.css";
 
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+    doc,
+    addDoc,
+    collection,
+    getDocs,
+    deleteDoc
+} from "firebase/firestore";
 import { db } from "../firebase";
 
 import Card from "./components/Card";
@@ -77,6 +83,12 @@ function App() {
         getData();
     };
 
+    // Delete Card
+    const onDelete = async (card) => {
+        await deleteDoc(doc(db, "cards", card));
+        getData();
+    };
+
     const [selectedTab, setSelectedTab] = useState(null);
 
     const [docID, setDocID] = useState();
@@ -143,6 +155,9 @@ function App() {
                                                         setSelectedTab
                                                     }
                                                     card={card}
+                                                    onDelete={() =>
+                                                        onDelete(card.id)
+                                                    }
                                                 />
                                             </button>
                                         </>

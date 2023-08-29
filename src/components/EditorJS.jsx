@@ -53,27 +53,13 @@ const Editor = ({ data, card }) => {
         updatingTime();
     };
 
-    // GetTime
-    const [timeAgo, setTimeAgo] = useState();
-    const updatingTime = () => {
-        const updateTime = moment(card.content.time).fromNow();
-        setTimeAgo(updateTime);
-    };
-
-    useEffect(() => {
-        updatingTime();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    console.log();
-
     return (
         <>
             <div className="w-full justify-between items-center relative">
                 <div id="editorjs" className="w-100"></div>
                 <button
                     onClick={() => handleSave()}
-                    className="text-white absolute right-0 top-0"
+                    className="text-white absolute z-40 right-0 top-0"
                 >
                     Save
                 </button>
