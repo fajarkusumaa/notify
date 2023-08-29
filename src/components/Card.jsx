@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 // import { useState } from "react";
 // import { Draggable } from "react-beautiful-dnd";
@@ -27,11 +26,9 @@ const Card = ({ card, setSelectedTab, onDelete }) => {
         setTimeAgo(updateTime);
     };
 
-    console.log(timeAgo);
-
     useEffect(() => {
         updatingTime();
-    }, [card.content.time]);
+    }, []);
 
     return (
         <div

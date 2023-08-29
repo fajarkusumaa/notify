@@ -50,8 +50,9 @@ const Editor = ({ data, card }) => {
         await updateDoc(noteRef, {
             content: savedData
         });
-        updatingTime();
     };
+
+    console.log();
 
     return (
         <>
