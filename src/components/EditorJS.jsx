@@ -12,8 +12,6 @@ import Checklist from "@editorjs/checklist";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
-// import ColorPlugin from "editorjs-text-color-plugin";
-
 import "../components/Editor.css";
 
 // eslint-disable-next-line no-undef
