@@ -34,7 +34,7 @@ const Sidebar = ({ addNewCard, cards }) => {
                     </button>
                 ) : (
                     <button
-                        className="w-full bg-zinc-50 text-zinc-900 transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
+                        className="w-full bg-zinc-50 text-zinc-900 font-bold transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
                         onClick={() => addNewCard()}
                     >
                         + New Notes

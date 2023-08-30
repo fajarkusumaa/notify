@@ -145,7 +145,7 @@ function App() {
                         placeholder="Search..."
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="w-1/3 h-14 rounded-full bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
+                        className="w-1/3 h-14 rounded-full text-zinc-600 font-bold bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
                     />
 
                     <div className="profile flex relative">

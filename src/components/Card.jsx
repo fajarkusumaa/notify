@@ -88,12 +88,12 @@ const Card = ({ card, setSelectedTab, onDelete }) => {
                         </button>
                     </div>
                 </div>
-                <p className="my-2 line-clamp-3 text-ellipsis overflow-hidden text-base w-full focus:bg-zinc-100 opacity-50 focus-visible:outline-none placeholder:opacity-100 placeholder:text-zinc-900">
+                <p className="my-2 line-clamp-3 text-ellipsis overflow-hidden font-medium text-base w-full focus:bg-zinc-100 opacity-50 focus-visible:outline-none placeholder:opacity-100 placeholder:text-zinc-900 pe-4">
                     {paragraphData[0].text}
                 </p>
 
                 {/* Time Update */}
-                <p className="text-zinc-400 text-sm mt-4">
+                <p className="text-zinc-400 text-sm mt-6 font-medium">
                     <span>Updated {timeAgo}</span>
                 </p>
             </div>
