@@ -1,12 +1,7 @@
-const Sidebar = ({ addNewCard }) => {
+/* eslint-disable react/prop-types */
+const Sidebar = ({ addNewCard, cards }) => {
     return (
         <div className="w-96 h-screen bg-white text-slate-800">
-            {/* Brand Logo */}
-            <div className="p-6 font-bold text-2xl">
-                Noti<span className="text-orange-400 italic">fy</span>
-            </div>
-            {/* = Brand Logo */}
-
             <div className="p-6 w-full">
                 <div className="text-zinc-900 hover:bg-slate-100 flex gap-2 p-2 w-full z-0">
                     <svg
@@ -30,14 +25,21 @@ const Sidebar = ({ addNewCard }) => {
                     />
                 </div>
             </div>
+
             {/* Side Nav */}
             <div className="p-6">
-                <button
-                    className="w-full bg-zinc-50 text-zinc-900 transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
-                    onClick={() => addNewCard()}
-                >
-                    + New Notes
-                </button>
+                {cards?.length >= 5 ? (
+                    <button className="w-full bg-orange-500 text-white transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm">
+                        Upgrade to pro
+                    </button>
+                ) : (
+                    <button
+                        className="w-full bg-zinc-50 text-zinc-900 transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
+                        onClick={() => addNewCard()}
+                    >
+                        + New Notes
+                    </button>
+                )}
             </div>
         </div>
     );

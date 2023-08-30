@@ -15,9 +15,18 @@ import { db } from "../firebase";
 
 import Card from "./components/Card";
 import Editor from "./components/EditorJS";
+import moment from "moment/moment";
 
 function App() {
     const [cards, setCards] = useState([]);
+    const [filteredCards, setFilteredCards] = useState(cards);
+
+    const now = new Date();
+    console.log(now);
+
+    const [selectedTab, setSelectedTab] = useState(null);
+    const [docID, setDocID] = useState();
+    const [show, setShow] = useState(false);
 
     // Get Data
     const getData = async () => {
@@ -28,17 +37,16 @@ function App() {
             tempData.push({ ...doc.data(), id: doc.id });
         });
         setCards(tempData);
-
-        console.log(tempData);
+        setFilteredCards(tempData);
     };
-    // -- Get Data
-
     useEffect(() => {
         getData();
     }, []);
+    // -- Get Data
 
     // Add Card
     const addNewCard = async () => {
+        const createDate = moment().format("dddd , MMMM Do YYYY, h:mm a");
         try {
             const docRef = await addDoc(collection(db, "cards"), {
                 title: "Card Title",
@@ -49,15 +57,22 @@ function App() {
                             type: "header",
 
                             data: {
-                                text: "Write your journey title here !",
+                                text: "Journey to the Mountains !",
                                 level: 1
+                            }
+                        },
+
+                        {
+                            type: "image",
+                            data: {
+                                url: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3270&q=80"
                             }
                         },
 
                         {
                             type: "paragraph",
                             data: {
-                                text: "Embark on an unforgettable journey where you'll discover [Destination], a [Adjective] land of [Noun] and [Noun]. From the moment you set foot in this [Adjective] paradise, you'll be captivated by the [Adjective] [Landmarks/Scenery] and immersed in the rich tapestry of [Culture/History]."
+                                text: "Embark on a breathtaking adventure through rugged terrains and towering peaks. Immerse yourself in the beauty of nature as you hike through lush forests, cross babbling streams, and conquer challenging trails. Whether you're an experienced mountaineer or a novice explorer, this journey promises awe-inspiring vistas and unforgettable moments. Get ready to discover the serenity of the mountains and create memories that will last a lifetime."
                             }
                         },
 
@@ -72,7 +87,8 @@ function App() {
                             }
                         }
                     ]
-                }
+                },
+                createOn: createDate
             });
 
             console.log("Document written with ID: ", docRef.id);
@@ -89,101 +105,150 @@ function App() {
         getData();
     };
 
-    const [selectedTab, setSelectedTab] = useState(null);
+    // Search Term
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const [docID, setDocID] = useState();
+    // Search function
+    const handleSearch = (e) => {
+        const searchText = e.target.value.toLowerCase();
+        setSearchTerm(searchText);
 
-    const [show, setShow] = useState(false);
+        const filtered = cards.filter(
+            (card) =>
+                card.title.toLowerCase().includes(searchText) ||
+                card.content.blocks.some(
+                    (block) =>
+                        block.type === "header" &&
+                        block.data.text.toLowerCase().includes(searchText)
+                )
+        );
 
+        setFilteredCards(filtered);
+    };
+
+    if (!cards) {
+        return <></>;
+    }
     return (
         <>
-            <div className="bg-white w-screen h-auto flex ">
-                {" "}
-                <Sidebar addNewCard={addNewCard} />
-                <div className="p-8 text-slate-800 w-full">
-                    <div className="flex justify-between container">
-                        <input
-                            type="text"
-                            placeholder="Search notes"
-                            className="w-1/3 h-14 rounded-full bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
-                        />
+            <div className="bg-white h-screen flex-col overflow-clip">
+                {/* Navbar */}
+                <div className="w-full min-w-screen bg-white flex px-8 py-6 items-center justify-between">
+                    {/* Brand Logo */}
+                    <div className="font-bold text-slate-800 text-2xl">
+                        Noti<span className="text-orange-400 italic">fy</span>
+                    </div>
+                    {/* = Brand Logo */}
+                    {/* Search Bar */}
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={handleSearch}
+                        className="w-1/3 h-14 rounded-full bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
+                    />
 
-                        <div className="profile flex relative">
-                            <button
-                                onClick={() => setShow(!show)}
-                                className="bg-transparent p-0 border-none focus-visible:outline-none focus:outline-none focus-within:border-none"
-                            >
-                                <img
-                                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&w=1000&q=80"
-                                    alt=""
-                                    className="border-4 border-slate-100 w-12 h-12 object-cover rounded-full"
-                                />
-                            </button>
+                    <div className="profile flex relative">
+                        <button
+                            onClick={() => setShow(!show)}
+                            className="bg-transparent p-0 border-none focus-visible:outline-none focus:outline-none focus-within:border-none"
+                        >
+                            <img
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&w=1000&q=80"
+                                alt=""
+                                className="border-4 border-slate-100 w-12 h-12 object-cover rounded-full"
+                            />
+                        </button>
 
-                            <div
-                                className={`${
-                                    show ? "visible" : "invisible"
-                                } absolute ease-in top-20 -right-2 z-20 shadow-xl bg-white rounded-lg p-6 w-[200px]`}
+                        <div
+                            className={`${
+                                show ? "visible" : "invisible"
+                            } absolute ease-in top-20 -right-2 z-50 bg-white rounded-lg flex flex-col p-4 w-[200px] border`}
+                        >
+                            <p className="mb-3">Fajar Kusuma</p>
+
+                            <a
+                                href=""
+                                className="p-3 w-full bg-red-100 text-red-700 rounded-lg"
                             >
-                                <a href="">My Profile</a>
-                            </div>
+                                Log out
+                            </a>
                         </div>
                     </div>
+                </div>
+                <div className="flex w-screen">
+                    <Sidebar addNewCard={addNewCard} cards={cards} />
+                    <div className="p-8 pt-0 text-slate-800 w-full">
+                        <div className="flex justify-between container"></div>
 
-                    <div className="mt-8 flex gap-6">
-                        <div className="w-1/3 pt-6">
-                            <div className="text-4xl font-bold mb-12 ps-4">
-                                Notes
+                        {/* Main Content */}
+                        <div className="mt-8 flex h-screen pb-40">
+                            <div className="w-1/3 h-auto overflow-y-auto overflow-x-hidden">
+                                <div className="text-4xl fixed z-10 bg-white w-full font-bold mb-12 ps-4 py-4">
+                                    Notes
+                                </div>
+
+                                <div className="gap-4 flex flex-col mt-24 px-4">
+                                    {filteredCards?.map((card, i) => {
+                                        return (
+                                            <>
+                                                <label
+                                                    key={i}
+                                                    className="bg-zinc-50 rounded-xl p-0 m-0  border-0 focus-visible:outline-none focus:outline-none ring-0 flex items-center hover:bg-zinc-100"
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="selectedCard"
+                                                        onChange={() =>
+                                                            setDocID(i)
+                                                        }
+                                                        className="peer hidden"
+                                                    />
+                                                    <Card
+                                                        onClick={() =>
+                                                            setDocID(card.id)
+                                                        }
+                                                        selectedTab={
+                                                            selectedTab
+                                                        }
+                                                        setSelectedTab={
+                                                            setSelectedTab
+                                                        }
+                                                        data={
+                                                            card.content.blocks
+                                                        }
+                                                        card={card}
+                                                        onDelete={() =>
+                                                            onDelete(card.id)
+                                                        }
+                                                    />
+                                                </label>
+                                            </>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
-                            <div className="flex flex-col gap-4">
-                                {cards?.map((card, i) => {
-                                    console.log(card.content.blocks);
+                            <div
+                                className="detail-notes prose w-2/3 h-auto align-top relative track-slate"
+                                style={{ maxWidth: "100%" }}
+                            >
+                                {cards.map((card, i) => {
+                                    console.log(card);
                                     return (
                                         <>
-                                            <button
-                                                onClick={() => setDocID(i)}
-                                                className="bg-transparent p-0 m-0 border-0 outline-none ring-0"
-                                                key={i}
-                                            >
-                                                <Card
-                                                    onClick={() =>
-                                                        setDocID(card.id)
-                                                    }
-                                                    selectedTab={selectedTab}
-                                                    setSelectedTab={
-                                                        setSelectedTab
-                                                    }
+                                            {docID === i && (
+                                                <Editor
+                                                    data={card.content.blocks}
+                                                    docID={docID} // Pass the index (docID) of the card
                                                     card={card}
-                                                    onDelete={() =>
-                                                        onDelete(card.id)
-                                                    }
+                                                    getData={getData}
                                                 />
-                                            </button>
+                                            )}
                                         </>
                                     );
                                 })}
                             </div>
-                        </div>
-
-                        <div
-                            className="detail-notes prose w-2/3 h-auto align-top  overflow-x-auto track-slate"
-                            style={{ maxWidth: "100%" }}
-                        >
-                            {cards.map((card, i) => {
-                                console.log(card);
-                                return (
-                                    <>
-                                        {docID === i && (
-                                            <Editor
-                                                data={card.content.blocks}
-                                                docID={docID} // Pass the index (docID) of the card
-                                                card={card}
-                                            />
-                                        )}
-                                    </>
-                                );
-                            })}
                         </div>
                     </div>
                 </div>

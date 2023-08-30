@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.action button {
+    border: 0;
+}
+
+.action button:hover {
+    border: 0;
+}
+
+.action button:focus-visible {
+    border: transparent;
+    outline: 0 !important;
+}

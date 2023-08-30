@@ -1,17 +1,20 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
 import SimpleImage from "@editorjs/simple-image";
+import Embed from "@editorjs/embed";
+import Quote from "@editorjs/quote";
+import Checklist from "@editorjs/checklist";
+
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import moment from "moment/moment";
 
-const Editor = ({ data, card }) => {
-    console.log(card);
+import "../components/Editor.css";
 
+const Editor = ({ data, card, getData }) => {
     const editorRef = useRef(null);
     useEffect(() => {
         if (editorRef.current) {
@@ -19,10 +22,11 @@ const Editor = ({ data, card }) => {
         }
         editorRef.current = new EditorJS({
             holderId: "editorjs",
+            autofocus: true,
             tools: {
                 header: {
                     class: Header,
-                    inlineToolbar: ["link"],
+                    inlineToolbar: true,
                     config: {
                         placeholder: "Enter a header",
                         levels: [1, 2, 3, 4],
@@ -34,7 +38,22 @@ const Editor = ({ data, card }) => {
                     inlineToolbar: true
                 },
                 image: {
-                    class: SimpleImage
+                    class: SimpleImage,
+                    inlineToolbar: ["link"]
+                },
+                quote: Quote,
+                embed: {
+                    class: Embed,
+                    config: {
+                        services: {
+                            youtube: true,
+                            html: true
+                        }
+                    }
+                },
+                checklist: {
+                    class: Checklist,
+                    inlineToolbar: true
                 }
             },
             data: {
@@ -50,20 +69,25 @@ const Editor = ({ data, card }) => {
         await updateDoc(noteRef, {
             content: savedData
         });
-    };
 
-    console.log();
+        getData();
+    };
 
     return (
         <>
-            <div className="w-full justify-between items-center relative">
-                <div id="editorjs" className="w-100"></div>
-                <button
-                    onClick={() => handleSave()}
-                    className="text-white absolute z-40 right-0 top-0"
-                >
+            <div className="flex justify-between absolute flex-1 w-full items-center py-4 px-8 backdrop-blur-lg z-10 bg-opacity-80 bg-white">
+                <div>
+                    {/* Created on : */}
+                    <span className="opacity-50"> {card.createOn}</span>
+                </div>
+
+                <button onClick={() => handleSave()} className="text-white">
                     Save
                 </button>
+            </div>
+            <div className="h-screen overflow-scroll mt-14">
+                {" "}
+                <div id="editorjs" className="w-100 mt-8"></div>
             </div>
         </>
     );
