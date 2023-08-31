@@ -1,3 +1,3 @@
 
 # notify
-Its live now ! You can check it <a href="https://vercel.com/fajarkusumaa/notify">Here</a>
+Its live now ! You can check it <a href="https://notify-rho.vercel.app/">Here</a>
