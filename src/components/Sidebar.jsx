@@ -34,9 +34,13 @@ const Sidebar = ({ addNewCard, cards }) => {
                     </button>
                 ) : (
                     <button
-                        className="w-full bg-zinc-50 text-zinc-900 font-bold transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
+                        className="w-full bg-zinc-50 text-zinc-900 font-bold transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm relative overflow-hidden"
                         onClick={() => addNewCard()}
                     >
+                        <div
+                            className="overlay absolute h-full top-0 left-0 bg-orange-200 mix-blend-multiply ease-in-out duration-150"
+                            style={{ width: `${20 * cards.length}%` }}
+                        ></div>
                         + New Notes
                     </button>
                 )}
