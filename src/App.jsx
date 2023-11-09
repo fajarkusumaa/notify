@@ -145,10 +145,26 @@ function App() {
                         placeholder="Search..."
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="w-1/3 h-14 rounded-full text-zinc-600 font-bold bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
+                        className="w-1/3 d:block hidden h-14 rounded-full text-zinc-600 font-bold bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
                     />
 
                     <div className="profile flex relative">
+                        {/* New Notes */}
+                        <div className="p-6 sm:block lg:hidden">
+                            {cards?.length >= 5 ? (
+                                <button className="w-full bg-orange-500 text-white transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm">
+                                    Upgrade to pro
+                                </button>
+                            ) : (
+                                <button
+                                    className="w-full bg-zinc-50 text-zinc-900 font-bold transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
+                                    onClick={() => addNewCard()}
+                                >
+                                    + New Notes
+                                </button>
+                            )}
+                        </div>
+
                         <button
                             onClick={() => setShow(!show)}
                             className="bg-transparent p-0 border-none focus-visible:outline-none focus:outline-none focus-within:border-none"
@@ -163,7 +179,7 @@ function App() {
                         <div
                             className={`${
                                 show ? "visible" : "invisible"
-                            } absolute ease-in top-20 -right-2 z-50 bg-white rounded-lg flex flex-col p-4 w-[200px] border`}
+                            } absolute ease-in top-20 -right-2 z-50 bg-white text-gray-600 rounded-lg flex flex-col p-4 w-[200px] border`}
                         >
                             <p className="mb-3">Fajar Kusuma</p>
 
@@ -176,19 +192,21 @@ function App() {
                         </div>
                     </div>
                 </div>
-                <div className="flex w-screen">
-                    <Sidebar addNewCard={addNewCard} cards={cards} />
-                    <div className="p-8 pt-0 text-slate-800 w-full">
-                        <div className="flex justify-between container"></div>
 
+                <div className="flex w-screen">
+                    <div className="hidden sm:hidden lg:block">
+                        {" "}
+                        <Sidebar addNewCard={addNewCard} cards={cards} />
+                    </div>
+                    <div className="p-8 pt-0 text-slate-800 w-full">
                         {/* Main Content */}
-                        <div className="mt-8 flex h-screen pb-40">
-                            <div className="w-1/3 h-auto overflow-y-auto overflow-x-hidden">
-                                <div className="text-4xl fixed z-10 bg-white w-full font-bold mb-12 ps-4 py-4">
+                        <div className="mt-8 flex lg:flex-row sm:flex-col xs:flex-col h-screen pb-40">
+                            <div className="md:w-1/3 w-full h-auto overflow-y-auto overflow-x-hidden">
+                                <div className="text-4xl fixed z-10 bg-white w-full font-bold mb-12 py-4">
                                     Notes
                                 </div>
 
-                                <div className="gap-4 flex flex-col mt-24 px-4">
+                                <div className="gap-4 flex flex-col mt-24 pe-4">
                                     {filteredCards?.map((card, i) => {
                                         return (
                                             <>
@@ -230,7 +248,7 @@ function App() {
                             </div>
 
                             <div
-                                className="detail-notes prose w-2/3 h-auto align-top relative track-slate"
+                                className="detail-notes prose md:w-2/3 w-full h-auto align-top relative track-slate"
                                 style={{ maxWidth: "100%" }}
                             >
                                 {cards?.map((card, i) => {

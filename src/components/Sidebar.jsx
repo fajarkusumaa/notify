@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const Sidebar = ({ addNewCard, cards }) => {
     return (
-        <div className="w-96 h-screen bg-white text-slate-800">
+        <div className="w-72 h-screen bg-white text-slate-800">
             <div className="p-6 w-full">
                 <div className="text-zinc-900 hover:bg-slate-100 flex gap-2 p-2 w-full z-0">
                     <svg
