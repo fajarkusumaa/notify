@@ -194,14 +194,14 @@ function App() {
                 </div>
 
                 <div className="flex w-screen">
-                    <div className="hidden sm:hidden lg:block">
+                    <div className="hidden lg:block">
                         {" "}
                         <Sidebar addNewCard={addNewCard} cards={cards} />
                     </div>
                     <div className="p-8 pt-0 text-slate-800 w-full">
                         {/* Main Content */}
                         <div className="mt-8 flex lg:flex-row sm:flex-col xs:flex-col h-screen pb-40">
-                            <div className="md:w-1/3 w-full h-auto overflow-y-auto overflow-x-hidden">
+                            <div className="hidden w-full md:block md:w-1/3 sm:w-1/3 h-auto  overflow-y-auto overflow-x-hidden">
                                 <div className="text-4xl fixed z-10 bg-white w-full font-bold mb-12 py-4">
                                     Notes
                                 </div>
@@ -248,7 +248,7 @@ function App() {
                             </div>
 
                             <div
-                                className="detail-notes prose md:w-2/3 w-full h-auto align-top relative track-slate"
+                                className="detail-notes prose w-full h-auto align-top relative track-slate"
                                 style={{ maxWidth: "100%" }}
                             >
                                 {cards?.map((card, i) => {
