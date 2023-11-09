@@ -233,7 +233,7 @@ function App() {
                                 className="detail-notes prose w-2/3 h-auto align-top relative track-slate"
                                 style={{ maxWidth: "100%" }}
                             >
-                                {cards.map((card, i) => {
+                                {cards?.map((card, i) => {
                                     console.log(card);
                                     return (
                                         <>
