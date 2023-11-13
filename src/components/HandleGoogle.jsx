@@ -11,7 +11,7 @@ const HandleGoogle = ({ setUser, setCurrentUser }) => {
         try {
             const data = await signInWithPopup(auth, provider);
 
-            localStorage.setItem("name", data.user.displayName);
+            localStorage.setItem("username", data.user.displayName);
             localStorage.setItem("photoURL", data.user.photoURL);
             localStorage.setItem("email", data.user.email);
 
@@ -32,7 +32,7 @@ const HandleGoogle = ({ setUser, setCurrentUser }) => {
 
     useEffect(() => {
         setUser({
-            name: localStorage.getItem("name"),
+            name: localStorage.getItem("username"),
             photoURL: localStorage.getItem("photoURL"),
             email: localStorage.getItem("email")
         }),

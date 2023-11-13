@@ -19,6 +19,7 @@ import Editor from "./components/EditorJS";
 import moment from "moment/moment";
 import HandleGoogle from "./components/HandleGoogle";
 import HandleSignOut from "./components/HandleSignOut";
+import { useRef } from "react";
 
 function App() {
     const [cards, setCards] = useState([]);
@@ -26,11 +27,26 @@ function App() {
 
     const [currentUser, setCurrentUser] = useState("");
 
-    console.log(currentUser);
+    // Modal Ref
+    const modalRef = useRef(null);
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setShow(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+    // Modal ref
 
     useEffect(() => {
         setUser({
-            name: user.displayName,
+            name: localStorage.getItem("username"),
             photoURL: localStorage.getItem("photoURL"),
             email: localStorage.getItem("email")
         });
@@ -187,10 +203,11 @@ function App() {
                                 </button>
                             ) : (
                                 <button
-                                    className="w-full bg-zinc-50 text-zinc-900 font-bold transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
+                                    disabled={!currentUser}
+                                    className="w-full bg-zinc-50 disabled:bg-rose-300 text-zinc-900 font-bold transition-transform ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-sm"
                                     onClick={() => addNewCard()}
                                 >
-                                    + New Notes
+                                    + New Note
                                 </button>
                             )}
                         </div>
@@ -216,16 +233,24 @@ function App() {
                                         className="border-4 border-slate-100 w-12 h-12 object-cover rounded-full"
                                     />
                                 </button>
+
+                                {/* Modal */}
                                 <div
+                                    ref={modalRef}
                                     className={`${
                                         show ? "visible" : "invisible"
-                                    } absolute ease-in top-20 -right-2 z-50 bg-white text-gray-600 rounded-lg flex flex-col p-4 w-[200px] border`}
+                                    } absolute ease-in top-20 -right-2 z-50 bg-white text-gray-600 rounded-lg flex flex-col p-4 w-[300px] border`}
                                 >
-                                    <p className="mb-3 capitalize">
+                                    <p className="mb-3 capitalize font-bold text-lg">
                                         {user.name}
                                     </p>
+                                    <p className="mb-3 break-words">
+                                        {user.email}
+                                    </p>
 
-                                    <HandleSignOut setUser={setUser} />
+                                    <div className="mt-3">
+                                        <HandleSignOut setUser={setUser} />
+                                    </div>
                                 </div>
                             </>
                         )}
@@ -287,7 +312,7 @@ function App() {
                             </div>
 
                             <div
-                                className="detail-notes prose w-full h-auto align-top relative track-slate"
+                                className="detail-notes prose w-full lg:w-3/4 h-auto align-top relative track-slate"
                                 style={{ maxWidth: "100%" }}
                             >
                                 {cards?.map((card, i) => {
