@@ -38,7 +38,7 @@ const Sidebar = ({ addNewCard, cards }) => {
                         onClick={() => addNewCard()}
                     >
                         <div
-                            className="overlay absolute h-full top-0 left-0 bg-orange-200 mix-blend-multiply ease-in-out duration-150"
+                            className="overlay absolute h-full top-0 left-0 bg-orange-300 mix-blend-multiply ease-in-out duration-150"
                             style={{ width: `${20 * cards.length}%` }}
                         ></div>
                         + New Notes
