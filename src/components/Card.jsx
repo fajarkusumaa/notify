@@ -8,16 +8,6 @@ import { useState, useEffect } from "react";
 import "../components/Card.css";
 
 const Card = ({ card, setSelectedTab, onDelete }) => {
-    // const onSave = async () => {
-    //     const noteRef = doc(db, "cards", card.id);
-    //     // Set the "capital" field of the city 'DC'
-    //     await updateDoc(noteRef, {
-    //         title: document.getElementById(`title-${card.id}`).value,
-    //         desc: document.getElementById(`desc-${card.id}`).value
-    //     });
-    //     console.log(card.id);
-    // };
-
     // GetTime
     const [timeAgo, setTimeAgo] = useState();
 
@@ -43,8 +33,6 @@ const Card = ({ card, setSelectedTab, onDelete }) => {
         (block) => block.type === "header"
     );
     const headerData = filteredHeader.map((block) => block.data);
-
-    console.log(headerData);
 
     return (
         <>

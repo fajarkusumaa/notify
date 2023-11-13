@@ -18,7 +18,7 @@ import { db } from "../../firebase";
 import "../components/Editor.css";
 
 // eslint-disable-next-line no-undef
-const Editor = ({ data, card, getData }) => {
+const Editor = ({ data, card, getData, currentUser }) => {
     const editorRef = useRef(null);
 
     useEffect(() => {
@@ -99,7 +99,7 @@ const Editor = ({ data, card, getData }) => {
     const handleSave = async () => {
         console.log(card);
         const savedData = await editorRef.current.save(); // Retrieve Editor.js content
-        const noteRef = doc(db, "cards", card.id);
+        const noteRef = doc(db, "users", currentUser, "cards", card.id);
         await updateDoc(noteRef, {
             content: savedData
         });

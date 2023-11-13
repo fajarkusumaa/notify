@@ -9,28 +9,56 @@ import {
     addDoc,
     collection,
     getDocs,
-    deleteDoc
+    deleteDoc,
+    query,
+    setDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
 
 import Card from "./components/Card";
 import Editor from "./components/EditorJS";
 import moment from "moment/moment";
+import HandleGoogle from "./components/HandleGoogle";
+import HandleSignOut from "./components/HandleSignOut";
+import { getAuth } from "firebase/auth";
 
 function App() {
     const [cards, setCards] = useState([]);
     const [filteredCards, setFilteredCards] = useState(cards);
+
+    const [currentUser, setCurrentUser] = useState("");
+
+    console.log(currentUser);
+
+    useEffect(() => {
+        setUser({
+            name: user.displayName,
+            photoURL: localStorage.getItem("photoURL"),
+            email: localStorage.getItem("email")
+        });
+    }, []);
+
+    const [user, setUser] = useState({});
+    console.log(user);
 
     const now = new Date();
     console.log(now);
 
     const [selectedTab, setSelectedTab] = useState(null);
     const [docID, setDocID] = useState();
+
     const [show, setShow] = useState(false);
 
     // Get Data
     const getData = async () => {
-        const querySnapshot = await getDocs(collection(db, "cards"));
+        const q = query(collection(db, "users", currentUser, "cards"));
+
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+
         const tempData = [];
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
@@ -39,16 +67,19 @@ function App() {
         setCards(tempData);
         setFilteredCards(tempData);
     };
+
     useEffect(() => {
         getData();
-    }, []);
+    }, [currentUser]);
     // -- Get Data
 
     // Add Card
     const addNewCard = async () => {
+        console.log(currentUser.uid);
         const createDate = moment().format("dddd , MMMM Do YYYY, h:mm a");
+
         try {
-            const docRef = await addDoc(collection(db, "cards"), {
+            await addDoc(collection(db, "users", currentUser, "cards"), {
                 title: "Card Title",
                 desc: "Write your description here",
                 content: {
@@ -91,7 +122,7 @@ function App() {
                 createOn: createDate
             });
 
-            console.log("Document written with ID: ", docRef.id);
+            console.log("Add document success !");
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -101,7 +132,12 @@ function App() {
 
     // Delete Card
     const onDelete = async (card) => {
-        await deleteDoc(doc(db, "cards", card));
+        try {
+            await deleteDoc(doc(db, "users", currentUser, "cards", card));
+            console.log("delete success !");
+        } catch (e) {
+            console.error("Error delete cards: ", e);
+        }
         getData();
     };
 
@@ -165,30 +201,30 @@ function App() {
                             )}
                         </div>
 
+                        <HandleGoogle
+                            setUser={setUser}
+                            setCurrentUser={setCurrentUser}
+                            user={user}
+                        />
+
                         <button
                             onClick={() => setShow(!show)}
                             className="bg-transparent p-0 border-none focus-visible:outline-none focus:outline-none focus-within:border-none"
                         >
                             <img
-                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&w=1000&q=80"
+                                src={user.photoURL}
                                 alt=""
                                 className="border-4 border-slate-100 w-12 h-12 object-cover rounded-full"
                             />
                         </button>
-
                         <div
                             className={`${
                                 show ? "visible" : "invisible"
                             } absolute ease-in top-20 -right-2 z-50 bg-white text-gray-600 rounded-lg flex flex-col p-4 w-[200px] border`}
                         >
-                            <p className="mb-3">Fajar Kusuma</p>
+                            <p className="mb-3 capitalize">{user.name}</p>
 
-                            <a
-                                href=""
-                                className="p-3 w-full bg-red-100 text-red-700 rounded-lg"
-                            >
-                                Log out
-                            </a>
+                            <HandleSignOut setUser={setUser} />
                         </div>
                     </div>
                 </div>
@@ -261,6 +297,7 @@ function App() {
                                                     docID={docID} // Pass the index (docID) of the card
                                                     card={card}
                                                     getData={getData}
+                                                    currentUser={currentUser}
                                                 />
                                             )}
                                         </>
