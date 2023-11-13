@@ -10,8 +10,7 @@ import {
     collection,
     getDocs,
     deleteDoc,
-    query,
-    setDoc
+    query
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -20,7 +19,6 @@ import Editor from "./components/EditorJS";
 import moment from "moment/moment";
 import HandleGoogle from "./components/HandleGoogle";
 import HandleSignOut from "./components/HandleSignOut";
-import { getAuth } from "firebase/auth";
 
 function App() {
     const [cards, setCards] = useState([]);
@@ -54,10 +52,6 @@ function App() {
         const q = query(collection(db, "users", currentUser, "cards"));
 
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-        });
 
         const tempData = [];
         querySnapshot.forEach((doc) => {
@@ -181,7 +175,7 @@ function App() {
                         placeholder="Search..."
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="w-1/3 d:block hidden h-14 rounded-full text-zinc-600 font-bold bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
+                        className="w-1/3 h-14 rounded-full text-zinc-600 font-bold bg-white border ps-8 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-400 focus-visible:border-transparent"
                     />
 
                     <div className="profile flex relative">
@@ -201,31 +195,40 @@ function App() {
                             )}
                         </div>
 
-                        <HandleGoogle
-                            setUser={setUser}
-                            setCurrentUser={setCurrentUser}
-                            user={user}
-                        />
+                        {!currentUser ? (
+                            <>
+                                {" "}
+                                <HandleGoogle
+                                    setUser={setUser}
+                                    setCurrentUser={setCurrentUser}
+                                    user={user}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={() => setShow(!show)}
+                                    className="bg-transparent p-0 border-none focus-visible:outline-none focus:outline-none focus-within:border-none"
+                                >
+                                    <img
+                                        src={user.photoURL}
+                                        alt=""
+                                        className="border-4 border-slate-100 w-12 h-12 object-cover rounded-full"
+                                    />
+                                </button>
+                                <div
+                                    className={`${
+                                        show ? "visible" : "invisible"
+                                    } absolute ease-in top-20 -right-2 z-50 bg-white text-gray-600 rounded-lg flex flex-col p-4 w-[200px] border`}
+                                >
+                                    <p className="mb-3 capitalize">
+                                        {user.name}
+                                    </p>
 
-                        <button
-                            onClick={() => setShow(!show)}
-                            className="bg-transparent p-0 border-none focus-visible:outline-none focus:outline-none focus-within:border-none"
-                        >
-                            <img
-                                src={user.photoURL}
-                                alt=""
-                                className="border-4 border-slate-100 w-12 h-12 object-cover rounded-full"
-                            />
-                        </button>
-                        <div
-                            className={`${
-                                show ? "visible" : "invisible"
-                            } absolute ease-in top-20 -right-2 z-50 bg-white text-gray-600 rounded-lg flex flex-col p-4 w-[200px] border`}
-                        >
-                            <p className="mb-3 capitalize">{user.name}</p>
-
-                            <HandleSignOut setUser={setUser} />
-                        </div>
+                                    <HandleSignOut setUser={setUser} />
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
 
